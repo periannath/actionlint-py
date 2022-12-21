@@ -18,14 +18,15 @@ from setuptools import setup
 from setuptools.command.install import install as orig_install
 
 ACTIONLINT_VERSION = '1.6.22'
+# TODO Support other platforms
 POSTFIX_SHA256 = {
     ('linux', 'armv6hf'): (
-        'linux_armv6hf.tar.xz',
-        '6fb0ab3dbf2f3448f1096bd01c884186070899555dbe5b0a12c94203618e7217'
+        'linux_armv6.tar.gz',
+        '6fb0ab3dbf2f3448f1096bd01c884186070899555dbe5b0a12c94203618e7217',
     ),
-    ('linux', 'amd64'): (
-        'linux_amd64.tar.gz'
-        '7d7a3061b59718728788e75e6a177c621a31a683ffd21fedeabc1296fc2ee289'
+    ('linux', 'AMD64'): (
+        'linux_amd64.tar.gz',
+        '7d7a3061b59718728788e75e6a177c621a31a683ffd21fedeabc1296fc2ee289',
     ),
 }
 POSTFIX_SHA256[('linux', 'armv7l')] = POSTFIX_SHA256[('linux', 'armv6hf')]
@@ -35,9 +36,8 @@ PY_VERSION = '3'
 
 
 def get_download_url() -> tuple[str, str]:
-    postfix, sha256 = POSTFIX_SHA256[(sys.platform, platform.machine())]
-    print(postfix)
-    print(sha256)
+    # postfix, sha256 = POSTFIX_SHA256[(sys.platform, platform.machine())]
+    postfix, sha256 = POSTFIX_SHA256[('linux', 'aarch64')]
     url = (
         f'https://github.com/rhysd/actionlint/releases/download/'
         f'v{ACTIONLINT_VERSION}/actionlint_{ACTIONLINT_VERSION}_{postfix}'
