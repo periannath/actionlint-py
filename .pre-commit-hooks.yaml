@@ -3,5 +3,5 @@
   description: Check GitHub workflow files with actionlint
   entry: actionlint
   language: python
-  types: [shell]
-  # require_serial: true # shellcheck can detect sourcing this way
+  types: ["yaml"]
+  files: "^.github/workflows/"
