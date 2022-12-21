@@ -36,8 +36,7 @@ PY_VERSION = '3'
 
 
 def get_download_url() -> tuple[str, str]:
-    # postfix, sha256 = POSTFIX_SHA256[(sys.platform, platform.machine())]
-    postfix, sha256 = POSTFIX_SHA256[('linux', 'aarch64')]
+    postfix, sha256 = POSTFIX_SHA256[(sys.platform, platform.machine())]
     url = (
         f'https://github.com/rhysd/actionlint/releases/download/'
         f'v{ACTIONLINT_VERSION}/actionlint_{ACTIONLINT_VERSION}_{postfix}'
@@ -64,7 +63,7 @@ def extract(url: str, data: bytes) -> bytes:
         if '.tar.' in url:
             with tarfile.open(fileobj=bio) as tarf:
                 for info in tarf.getmembers():
-                    if info.isfile() and info.name.endswith('shellcheck'):
+                    if info.isfile() and info.name.endswith('actionlint'):
                         return tarf.extractfile(info).read()
         elif url.endswith('.zip'):
             with zipfile.ZipFile(bio) as zipf:
@@ -76,7 +75,7 @@ def extract(url: str, data: bytes) -> bytes:
 
 
 def save_executable(data: bytes, base_dir: str):
-    exe = 'shellcheck' if sys.platform != 'win32' else 'shellcheck.exe'
+    exe = 'actionlint' if sys.platform != 'win32' else 'actionlint.exe'
     output_path = os.path.join(base_dir, exe)
     os.makedirs(base_dir)
 
@@ -95,7 +94,7 @@ class build(orig_build):
 
 
 class install(orig_install):
-    sub_commands = orig_install.sub_commands + [('install_shellcheck', None)]
+    sub_commands = orig_install.sub_commands + [('install_actionlint', None)]
 
 
 class fetch_binaries(Command):
@@ -115,8 +114,8 @@ class fetch_binaries(Command):
         save_executable(data, self.build_temp)
 
 
-class install_shellcheck(Command):
-    description = 'install the shellcheck executable'
+class install_actionlint(Command):
+    description = 'install the actionlint executable'
     outfiles = ()
     build_dir = install_dir = None
 
@@ -139,30 +138,28 @@ class install_shellcheck(Command):
 
 command_overrides = {
     'install': install,
-    'install_shellcheck': install_shellcheck,
+    'install_actionlint': install_actionlint,
     'build': build,
     'fetch_binaries': fetch_binaries,
 }
 
 
-# try:
-#     from wheel.bdist_wheel import bdist_wheel as orig_bdist_wheel
-# except ImportError:
-#     pass
-# else:
-#     class bdist_wheel(orig_bdist_wheel):
-#         def finalize_options(self):
-#             orig_bdist_wheel.finalize_options(self)
-#             # Mark us as not a pure python package
-#             self.root_is_pure = False
+try:
+    from wheel.bdist_wheel import bdist_wheel as orig_bdist_wheel
+except ImportError:
+    pass
+else:
+    class bdist_wheel(orig_bdist_wheel):
+        def finalize_options(self):
+            orig_bdist_wheel.finalize_options(self)
+            # Mark us as not a pure python package
+            self.root_is_pure = False
 
-#         def get_tag(self):
-#             _, _, plat = orig_bdist_wheel.get_tag(self)
-#             # We don't contain any python source, nor any python extensions
-#             return 'py2.py3', 'none', plat
+        def get_tag(self):
+            _, _, plat = orig_bdist_wheel.get_tag(self)
+            # We don't contain any python source, nor any python extensions
+            return 'py2.py3', 'none', plat
 
-#     command_overrides['bdist_wheel'] = bdist_wheel
+    command_overrides['bdist_wheel'] = bdist_wheel
 
-# setup(version=f'{SHELLCHECK_VERSION}.{PY_VERSION}', cmdclass=command_overrides)
-
-print(get_download_url())
+setup(version=f'{ACTIONLINT_VERSION}.{PY_VERSION}', cmdclass=command_overrides)
