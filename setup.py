@@ -17,40 +17,30 @@ from distutils.core import Command
 from setuptools import setup
 from setuptools.command.install import install as orig_install
 
-SHELLCHECK_VERSION = '0.9.0'
+ACTIONLINT_VERSION = '1.6.22'
 POSTFIX_SHA256 = {
     ('linux', 'armv6hf'): (
-        'linux.armv6hf.tar.xz',
-        '03deed9ded9dd66434ccf9649815bcde7d275d6c9f6dcf665b83391673512c75',
+        'linux_armv6hf.tar.xz',
+        '6fb0ab3dbf2f3448f1096bd01c884186070899555dbe5b0a12c94203618e7217'
     ),
-    ('linux', 'aarch64'): (
-        'linux.aarch64.tar.xz',
-        '179c579ef3481317d130adebede74a34dbbc2df961a70916dd4039ebf0735fae',
-    ),
-    ('linux', 'x86_64'): (
-        'linux.x86_64.tar.xz',
-        '700324c6dd0ebea0117591c6cc9d7350d9c7c5c287acbad7630fa17b1d4d9e2f',
-    ),
-    ('darwin', 'x86_64'): (
-        'darwin.x86_64.tar.xz',
-        '7d3730694707605d6e60cec4efcb79a0632d61babc035aa16cda1b897536acf5',
-    ),
-    ('win32', 'AMD64'): (
-        'zip',
-        'ae58191b1ea4ffd9e5b15da9134146e636440302ce3e2f46863e8d71c8be1bbb',
+    ('linux', 'amd64'): (
+        'linux_amd64.tar.gz'
+        '7d7a3061b59718728788e75e6a177c621a31a683ffd21fedeabc1296fc2ee289'
     ),
 }
-POSTFIX_SHA256[('cygwin', 'x86_64')] = POSTFIX_SHA256[('win32', 'AMD64')]
-POSTFIX_SHA256[('darwin', 'arm64')] = POSTFIX_SHA256[('darwin', 'x86_64')]
 POSTFIX_SHA256[('linux', 'armv7l')] = POSTFIX_SHA256[('linux', 'armv6hf')]
-PY_VERSION = '2'
+POSTFIX_SHA256[('linux', 'aarch64')] = POSTFIX_SHA256[('linux', 'AMD64')]
+POSTFIX_SHA256[('linux', 'x86_64')] = POSTFIX_SHA256[('linux', 'AMD64')]
+PY_VERSION = '3'
 
 
 def get_download_url() -> tuple[str, str]:
     postfix, sha256 = POSTFIX_SHA256[(sys.platform, platform.machine())]
+    print(postfix)
+    print(sha256)
     url = (
-        f'https://github.com/koalaman/shellcheck/releases/download/'
-        f'v{SHELLCHECK_VERSION}/shellcheck-v{SHELLCHECK_VERSION}.{postfix}'
+        f'https://github.com/rhysd/actionlint/releases/download/'
+        f'v{ACTIONLINT_VERSION}/actionlint_{ACTIONLINT_VERSION}_{postfix}'
     )
     return url, sha256
 
@@ -155,22 +145,24 @@ command_overrides = {
 }
 
 
-try:
-    from wheel.bdist_wheel import bdist_wheel as orig_bdist_wheel
-except ImportError:
-    pass
-else:
-    class bdist_wheel(orig_bdist_wheel):
-        def finalize_options(self):
-            orig_bdist_wheel.finalize_options(self)
-            # Mark us as not a pure python package
-            self.root_is_pure = False
+# try:
+#     from wheel.bdist_wheel import bdist_wheel as orig_bdist_wheel
+# except ImportError:
+#     pass
+# else:
+#     class bdist_wheel(orig_bdist_wheel):
+#         def finalize_options(self):
+#             orig_bdist_wheel.finalize_options(self)
+#             # Mark us as not a pure python package
+#             self.root_is_pure = False
 
-        def get_tag(self):
-            _, _, plat = orig_bdist_wheel.get_tag(self)
-            # We don't contain any python source, nor any python extensions
-            return 'py2.py3', 'none', plat
+#         def get_tag(self):
+#             _, _, plat = orig_bdist_wheel.get_tag(self)
+#             # We don't contain any python source, nor any python extensions
+#             return 'py2.py3', 'none', plat
 
-    command_overrides['bdist_wheel'] = bdist_wheel
+#     command_overrides['bdist_wheel'] = bdist_wheel
 
-setup(version=f'{SHELLCHECK_VERSION}.{PY_VERSION}', cmdclass=command_overrides)
+# setup(version=f'{SHELLCHECK_VERSION}.{PY_VERSION}', cmdclass=command_overrides)
+
+print(get_download_url())
