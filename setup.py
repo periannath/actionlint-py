@@ -28,10 +28,24 @@ POSTFIX_SHA256 = {
         'linux_amd64.tar.gz',
         '7d7a3061b59718728788e75e6a177c621a31a683ffd21fedeabc1296fc2ee289',
     ),
+    ('darwin', 'arm64'): (
+        'darwin_arm64.tar.gz',
+        'cb6c1b2baaf275aa4c61a5163e8734d11d3066eea84f792545e45dbd84701049',
+    ),
+    ('darwin', 'AMD64'): (
+        'darwin_amd64.tar.gz',
+        '6a1a522521e2fa0351328c439a63fc1c51611d45fc8156af15ad8690165f27c3',
+    ),
+    ('win32', 'AMD64'): (
+        'windows_amd64.zip',
+        'c0007e418e6cd2008769e55666229b50677f85975676c4246baee5ec3ae9a2b5',
+    ),
 }
 POSTFIX_SHA256[('linux', 'armv7l')] = POSTFIX_SHA256[('linux', 'armv6hf')]
 POSTFIX_SHA256[('linux', 'aarch64')] = POSTFIX_SHA256[('linux', 'AMD64')]
 POSTFIX_SHA256[('linux', 'x86_64')] = POSTFIX_SHA256[('linux', 'AMD64')]
+POSTFIX_SHA256[('darwin', 'x86_64')] = POSTFIX_SHA256[('darwin', 'arm64')]
+POSTFIX_SHA256[('cygwin', 'x86_64')] = POSTFIX_SHA256[('win32', 'AMD64')]
 PY_VERSION = '3'
 
 
